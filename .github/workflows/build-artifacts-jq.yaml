@@ -1,0 +1,57 @@
+name: Release Build JQ
+
+on:
+  push:
+    paths-ignore:
+      - "*.md"
+      - "compose.*"
+    branches:
+      - "jq"
+
+env: 
+  CARGO_TERM_COLOR: always
+jobs:
+  build:
+    name: Rust project - latest
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-musl
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          target: ${{ matrix.target }}
+      
+      - if: matrix.target == 'x86_64-unknown-linux-musl'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends musl-tools
+ 
+      - name: Versions
+        id: version
+        run: echo "VERSION=$(cargo metadata --format-version 1 --no-deps | jq .packages[0].version -r | sed 's/^/v/')" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Package release
+        run: tar czf redlib-${{ matrix.target }}.tar.gz -C target/${{ matrix.target }}/release/ redlib
+
+      - name: Upload release
+        uses: softprops/action-gh-release@v1
+        if: github.base_ref != 'main' && github.event_name == 'release'
+        with:
+          tag_name: ${{ steps.version.outputs.VERSION }}
+          name: ${{ steps.version.outputs.VERSION }} - ${{ github.event.head_commit.message }}
+          draft: true
+          files: |
+            redlib-${{ matrix.target }}.tar.gz
+          body: |
+            - ${{ github.event.head_commit.message }} ${{ github.sha }}
+          generate_release_notes: true
+
+
+
