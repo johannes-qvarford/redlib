@@ -112,6 +112,16 @@ pre, form, fieldset, table, th, td, select, input {
 	font-family: "Inter", sans-serif;
 }
 
+html.fixed_navbar {
+	scroll-padding-top: 50px;
+}
+
+@media screen and (max-width: 800px) {
+	html.fixed_navbar {
+		scroll-padding-top: 100px;
+	}
+}
+
 body {
 	background: var(--background);
 	padding-bottom: var(--footer-height);
@@ -175,6 +185,11 @@ nav #links svg {
 
 nav #redlib {
 	vertical-align: -2px;
+}
+
+figcaption {
+	margin-top: 5px;
+	text-align: center;
 }
 
 #settings_link {
@@ -969,10 +984,6 @@ a.search_subreddit:hover {
 	vertical-align: bottom;
 }
 
-.gallery figcaption {
-	margin-top: 5px;
-}
-
 .gallery .outbound_url {
 	color: var(--accent);
 	text-overflow: ellipsis;
@@ -996,6 +1007,13 @@ a.search_subreddit:hover {
 	grid-area: post_body;
 	width: calc(100% - 30px);
 	overflow-wrap: anywhere;
+}
+
+.post_body img {
+	max-width: 100%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .post_poll {
@@ -1084,7 +1102,7 @@ a.search_subreddit:hover {
 	display: auto;
 }
 
-@media screen and (min-width: 480px) {
+@media screen and (min-width: 481px) {
 	#post_links > li.mobile_item {
 			display: none;
 	}
@@ -1159,6 +1177,22 @@ a.search_subreddit:hover {
 	margin: 10px 0;
 	border-radius: 5px;
 	display: flex;
+}
+
+.comment img {
+	max-width: 50%;
+	height: auto;
+}
+
+@media screen and (max-width: 500px) {
+	.comment img {
+		max-width: 80%;
+		height: auto;
+	}
+}
+
+.comment figure {
+	margin: 0;
 }
 
 .comment_left, .comment_right {
@@ -1458,8 +1492,17 @@ input[type="submit"] {
 	width: 100%;
 }
 
-.md > *:not(:first-child) {
+.md > p:not(:first-child):not(:last-child) {
 	margin-top: 20px;
+}
+
+.md > figure:first-of-type {
+	margin-top: 5px;
+	margin-bottom: 0px;
+}
+
+.md > figure:not(:first-of-type) {
+	margin-top: 10px;
 }
 
 .md h1 { font-size: 22px; }
